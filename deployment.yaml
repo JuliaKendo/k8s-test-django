@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: star-burger
+  labels:
+    app: star-burger
+spec:
+  selector:
+    matchLabels:
+      project: star-burger
+  template:
+    metadata:
+      labels:
+        project: star-burger
+    spec:
+      containers:
+        - name: django
+          image: djangoapp
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+#          envFrom:
+#          - configMapRef:
+#              name: env-config
+
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-app
+  labels:
+    env: prod
+    owner: JuliaKendo
+spec:
+  selector:
+    project: star-burger
+  ports:
+    - name: django
+      protocol: TCP
+      port: 8000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-serv
+  labels:
+    env: prod
+    owner: JuliaKendo
+spec:
+  selector:
+    project: star-burger
+  ports:
+
+    - name: nginx
+      protocol: TCP
+      port: 80
+

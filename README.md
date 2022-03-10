@@ -21,6 +21,32 @@ $ docker-compose run web ./manage.py createsuperuser
 
 Для тонкой настройки используйте переменные окружения. Список доступных переменных можно найти внутри файла `docker-compose.yml`.
 
+## Как запустить prod-версию на Kubernetes
+
+Создайте образ из docker файла:
+```
+eval $(minikube docker-env)
+docker build -t djangoapp -f backend_main_django/Dockerfile .
+```
+
+Установите переменные окружения в файле secrets.yaml.
+
+Создайте ConfigMap:
+```
+kubectl create configmap env-config --from-file=secrets.yaml
+```
+
+Создайте Deployment:
+```
+kubectl apply -f deployment.yaml
+```
+
+Создайте ingress:
+```
+kubectl apply -f ingress.yaml
+```
+
+
 ## Переменные окружения
 
 Образ с Django считывает настройки из переменных окружения:
