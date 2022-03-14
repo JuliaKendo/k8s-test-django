@@ -46,6 +46,11 @@ kubectl apply -f deployment.yaml
 kubectl apply -f ingress.yaml
 ```
 
+Создайте cornjob для ежемесячной очистки сессий django:
+```
+kubectl create -f clearsessions.yaml
+```
+
 
 ## Переменные окружения
 
