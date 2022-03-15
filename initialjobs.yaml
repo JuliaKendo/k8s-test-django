@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: djangoinitial
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 60
+  template:
+    spec:
+      containers:
+      - name: djangoinitial
+        image: djangoapp
+        imagePullPolicy: Never
+        envFrom:
+          - configMapRef:
+              name: env-config
+        args: 
+        - /bin/sh
+        - -c
+        - python manage.py makemigrations && python manage.py migrate
+      restartPolicy: Never

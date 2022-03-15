@@ -36,6 +36,17 @@ docker build -t djangoapp -f backend_main_django/Dockerfile .
 kubectl create configmap env-config --from-file=secrets.yaml
 ```
 
+Запустите манифест создания таблиц базы данных Django:
+```
+kubectl apply -f initialjobs.yaml
+```
+
+Удалите завершившуюся jod:
+```
+kubectl get pod                    # проверить что job находится в состоянии Completed
+kubectl apply -f initialjobs.yaml  # удалите job
+``` 
+
 Создайте Deployment:
 ```
 kubectl apply -f deployment.yaml
