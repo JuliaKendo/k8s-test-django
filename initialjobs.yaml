@@ -13,7 +13,7 @@ spec:
         imagePullPolicy: Never
         envFrom:
           - configMapRef:
-              name: env-config
+              name: env-configs
         args: 
         - /bin/sh
         - -c

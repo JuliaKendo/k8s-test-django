@@ -18,11 +18,10 @@ spec:
           image: djangoapp
           imagePullPolicy: Never
           ports:
-            - containerPort: 8000
-          command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+            - containerPort: 80
           envFrom:
           - configMapRef:
-              name: env-config
+              name: env-configs
 
 ---
 apiVersion: v1
@@ -38,5 +37,5 @@ spec:
   ports:
     - name: django
       protocol: TCP
-      port: 8000
+      port: 80
 

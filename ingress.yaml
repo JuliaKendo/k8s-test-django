@@ -16,16 +16,5 @@ spec:
             service:
               name: django-app
               port:
-                number: 8000
-
-  - host: serv.nginx
-    http:
-      paths:
-
-        - path: "/"
-          pathType: Prefix
-          backend:
-            service:
-              name: nginx-serv
-              port:
                 number: 80
+

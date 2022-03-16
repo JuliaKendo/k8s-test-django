@@ -18,5 +18,5 @@ spec:
             - python manage.py clearsessions
             envFrom:
               - configMapRef:
-                  name: env-config
+                  name: env-configs
           restartPolicy: OnFailure

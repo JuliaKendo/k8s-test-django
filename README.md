@@ -23,23 +23,35 @@ $ docker-compose run web ./manage.py createsuperuser
 
 ## Как запустить prod-версию на Kubernetes
 
+
 Создайте образ из docker файла:
 ```
 eval $(minikube docker-env)
 docker build -t djangoapp -f backend_main_django/Dockerfile .
 ```
 
-Установите переменные окружения в файле secrets.yaml.
+
+Создайте базу данных postgreSQL с использованием менедежера пакетов Helm:
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install my-release bitnami/postgresql
+```
+Helm должен быть предварительно установлен.
+
+
+Установите переменные окружения в файле secrets.properties.
 
 Создайте ConfigMap:
 ```
-kubectl create configmap env-config --from-file=secrets.yaml
+kubectl create configmap env-configs --from-env-file=secrets.properties
 ```
+
 
 Запустите манифест создания таблиц базы данных Django:
 ```
 kubectl apply -f initialjobs.yaml
 ```
+
 
 Удалите завершившуюся jod:
 ```
@@ -47,15 +59,18 @@ kubectl get pod                    # проверить что job находи�
 kubectl apply -f initialjobs.yaml  # удалите job
 ``` 
 
+
 Создайте Deployment:
 ```
 kubectl apply -f deployment.yaml
 ```
 
+
 Создайте ingress:
 ```
 kubectl apply -f ingress.yaml
 ```
+
 
 Создайте cornjob для ежемесячной очистки сессий django:
 ```
@@ -74,3 +89,9 @@ kubectl create -f clearsessions.yaml
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+При использовании Helm пароль суперпользователя можно получить следующим образом:
+```
+export POSTGRES_PASSWORD=$(kubectl get secret --namespace default postgres-postgresql -o jsonpath="{.data.postgres-password}" | base64 --decode)
+env | grep POSTGRES_PASSWORD
+```
+
